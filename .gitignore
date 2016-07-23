@@ -1,0 +1,11 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+
+#This file contains the API Key which should not be shared.
+app/src/main/java/will/tesler/drivethru/security/GoogleAuth.java
