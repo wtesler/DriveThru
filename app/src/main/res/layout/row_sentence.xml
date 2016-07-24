@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/item_spacing"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/textview_offset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        tools:text="1:"/>
+
+    <TextView
+        android:id="@+id/textview_sentence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/item_spacing"
+        android:textStyle="bold"
+        tools:text="This is a story about a guy whose life got flipped turned upside down."/>
+</LinearLayout>
