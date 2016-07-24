@@ -24,7 +24,8 @@ public class PartOfSpeech {
             PARTICLE,
             PUNCTUATION,
             VERB,
-            OTHER
+            OTHER,
+            AFFIX
     })
     public @interface Tag {}
     public static final String UNKNOWN = "UNKNOWN";

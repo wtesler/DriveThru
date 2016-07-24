@@ -7,5 +7,7 @@
 
     <dimen name="item_partofspeech_height">64dp</dimen>
 
+    <dimen name="edittext_min_height">64dp</dimen>
+
 
 </resources>

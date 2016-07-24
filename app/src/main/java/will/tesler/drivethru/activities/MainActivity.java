@@ -11,7 +11,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.squareup.okhttp.ResponseBody;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -39,6 +49,7 @@ import will.tesler.drivethru.speech.models.GcsAudio;
 import will.tesler.drivethru.speech.models.GcsSpeechRequest;
 import will.tesler.drivethru.speech.models.RecognitionConfig;
 import will.tesler.drivethru.speech.models.SpeechResponse;
+import will.tesler.drivethru.ui.Section;
 import will.tesler.drivethru.ui.SentenceTransformer;
 import will.tesler.drivethru.ui.TokenRowTransformer;
 import will.tesler.drivethru.ui.TreeTransformer;
@@ -52,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject LanguageClient mLanguageClient;
     @Inject SpeechClient mSpeechClient;
+    @Inject StorageReference mStorageReference;
 
     @Bind(R.id.button_analyze) Button mButtonAnalyze;
     @Bind(R.id.edittext_query) EditText mEditTextQuery;
@@ -91,23 +103,29 @@ public class MainActivity extends AppCompatActivity {
     public void onAnalyzeClick() {
         String query = mEditTextQuery.getText().toString();
         if (!query.equals("")) {
-            mAdapter.clear(true);
-
             LanguageRequest request = constructLanguageRequest(query);
-            requestLanguageAnalysis(mLanguageClient.parse(request));
+            requestLanguageAnalysis(mLanguageClient.rawParse(request));
 
             mEditTextQuery.setText("");
+            mRecyclerView.scrollToPosition(0);
             UiUtils.hideSoftKeyboard(this);
         }
     }
 
-    private void requestLanguageAnalysis(@NonNull Observable<LanguageResponse> response) {
-
+    private void requestLanguageAnalysis(@NonNull final Observable<ResponseBody> response) {
         languageSubscription = response
-                .subscribe(new Action1<LanguageResponse>() {
+                .subscribe(new Action1<ResponseBody>() {
                     @Override
-                    public void call(@NonNull LanguageResponse languageResponse) {
-                        visualizeLanguageResponse(languageResponse);
+                    public void call(@NonNull ResponseBody responseBody) {
+                        try {
+                            String jsonResponse = responseBody.string();
+                            Gson gson = new Gson();
+                            LanguageResponse languageResponse = gson.fromJson(jsonResponse, LanguageResponse.class);
+                            storeLanguageResponse(jsonResponse);
+                            visualizeLanguageResponse(languageResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -152,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.e("MainActivity", "Could not parse request.");
+                        Log.e("MainActivity", "Could not parse request.", throwable);
                     }
                 });
     }
@@ -162,7 +180,9 @@ public class MainActivity extends AppCompatActivity {
         int startTokenIndex = 0;
 
         for (int i = 0; i < languageResponse.sentences.length; i++) {
-            mAdapter.add(languageResponse.sentences[i]);
+            Section section = new Section();
+
+            section.add(languageResponse.sentences[i]);
 
             int endOffset = i < languageResponse.sentences.length - 1
                     ? languageResponse.sentences[i + 1].text.beginOffset
@@ -180,21 +200,42 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-//            for (Token token : languageResponse.tokens) {
-//                int tokenBeginOffset = token.text.beginOffset;
-//                if (tokenBeginOffset >= startOffset && tokenBeginOffset < endOffset) {
-//                    sentenceTokenList.add(token);
-//                }
-//            }
-
             Token[] sentenceTokens = sentenceTokenList.toArray(new Token[sentenceTokenList.size()]);
-            mAdapter.add(sentenceTokens);
+            section.add(sentenceTokens);
 
             DependencyTree dependencyTree = new DependencyTree(sentenceTokens, startTokenIndex);
-            mAdapter.add(dependencyTree);
+            section.add(dependencyTree);
+
+            mAdapter.add(section, 0);
 
             startTokenIndex = currentTokenIndex;
         }
+    }
+
+    private void storeLanguageResponse(String jsonResponse) {
+        StringBuilder filePathBuilder = new StringBuilder("analysis/")
+            .append(UUID.randomUUID().toString());
+
+        StorageReference searchReference = mStorageReference.child(filePathBuilder.toString());
+
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("text/plain")
+                .build();
+
+        searchReference.putBytes(jsonResponse.getBytes(), metadata)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i("MainActivity", "Success!");
+                        Log.i("MainActivity", "Transferred bytes: " + taskSnapshot.getBytesTransferred());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e("MainActivity", "Failure!", exception);
+                    }
+                });
     }
 
     private LanguageRequest constructLanguageRequest(String content) {

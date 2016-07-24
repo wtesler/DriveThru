@@ -18,6 +18,7 @@ public interface ApplicationComponent {
 
     LanguageClient languageClient();
 
+    @ApplicationModule.ForLanguage
     OkHttpClient okHttpClient();
 
     @ApplicationModule.ForLanguage
@@ -27,4 +28,10 @@ public interface ApplicationComponent {
 
     @ApplicationModule.ForSpeech
     Retrofit speechRetrofit();
+
+    @ApplicationModule.ForUpload
+    Retrofit storageRetrofit();
+
+    @ApplicationModule.ForUpload
+    OkHttpClient uploadHttpClient();
 }

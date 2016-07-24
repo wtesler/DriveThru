@@ -1,6 +1,7 @@
 <resources>
+    <string name="analyze">Analyze</string>
     <string name="app_name">DriveThru</string>
+    <string name="hint_analyze">Enter text that you want analyzed</string>
     <string name="offset">%d: </string>
     <string name="tree_item_lemma">(%s)</string>
-    <string name="hint_analyze">Enter text that you want analyzed</string>
 </resources>

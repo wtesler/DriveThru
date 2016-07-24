@@ -13,7 +13,8 @@
         <EditText
             android:id="@+id/edittext_query"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/edittext_min_height"
             android:layout_weight="1"
             android:padding="@dimen/item_spacing"
             android:hint="@string/hint_analyze"/>
@@ -21,9 +22,9 @@
         <Button
             android:id="@+id/button_analyze"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/item_spacing"
-            android:text="Analyze"/>
+            android:text="@string/analyze"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

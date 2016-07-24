@@ -15,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.R.attr.tag;
+
 /**
  * The UniversalAdapter is a composable non-abstract {@code RecyclerAdapter} which can be used as-is without needing to
  * be extended. Define and register {@code Transformers} which tell the adapter how to bind a model to a view. A
@@ -163,7 +165,7 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
      * Adds a new {@link Section} to the adapter.
      *
      * @param section The section to add.
-     * @return An AddResult containing a tag which can be used to modify the section later.
+     * @return An {@link AddResult} containing a tag which can be used to modify the section later.
      */
     @NonNull
     public AddResult add(Section section) {
@@ -176,7 +178,7 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
      *
      * @param section The section to add.
      * @param tag The unique tag for the section.
-     * @return An AddResult which contains whether the add operation caused a section to be replaced.
+     * @return An {@link AddResult} which contains whether the add operation caused a section to be replaced.
      */
     @NonNull
     public AddResult add(Section section, String tag) {
@@ -189,6 +191,39 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
         notifyDataSetChanged();
 
         return addResult;
+    }
+
+    /**
+     * Adds a {@link Section} to the adapter at the given position.
+     *
+     * @param section The section to add.
+     * @param position The section position.
+     * @return An {@link AddResult} which contains whether the add operation caused a section to be replaced.
+     */
+    @NonNull
+    public AddResult add(Section section, int position) {
+        verify(section);
+
+        String tag = UUID.randomUUID().toString();
+        Map<String, Section> shiftedSections = new LinkedHashMap<>();
+        int i = 0;
+        if (position == 0) {
+            shiftedSections.put(tag, section);
+            i = 1;
+        }
+        for (String sectionTag : mSections.keySet()) {
+            if (position == i) {
+                shiftedSections.put(tag, section);
+            }
+            shiftedSections.put(sectionTag, mSections.get(sectionTag));
+            i++;
+        }
+
+        mSections.clear();
+        mSections.putAll(shiftedSections);
+        notifyDataSetChanged();
+
+        return new AddResult(tag, false);
     }
 
     /**

@@ -11,8 +11,8 @@ public class SpeechClient {
 
     SpeechService mSpeechService;
 
-    public SpeechClient(SpeechService companyApi) {
-        mSpeechService = companyApi;
+    public SpeechClient(SpeechService service) {
+        mSpeechService = service;
     }
 
     public Observable<SpeechResponse> analyze(@NonNull GcsSpeechRequest request) {
