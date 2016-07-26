@@ -1,4 +1,4 @@
-package will.tesler.drivethru.application;
+package will.tesler.drivethru.activities;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
@@ -7,17 +7,15 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import retrofit.Retrofit;
-import will.tesler.drivethru.activities.MainActivity;
 import will.tesler.drivethru.controllers.AnalyzeController;
 import will.tesler.drivethru.controllers.HistoryController;
 import will.tesler.drivethru.navigation.DrawerController;
 import will.tesler.drivethru.speech.SpeechClient;
 import will.tesler.drivethru.language.LanguageClient;
-import will.tesler.drivethru.ui.DrawerTextTransformer;
 
 @Singleton
-@Component(modules = ApplicationModule.class)
-public interface ApplicationComponent {
+@Component(modules = ActivityModule.class)
+public interface ActivityComponent {
 
     void inject(AnalyzeController analyzeController);
 
@@ -37,20 +35,20 @@ public interface ApplicationComponent {
 
     LanguageClient languageClient();
 
-    @ApplicationModule.ForLanguage
+    @ActivityModule.ForLanguage
     OkHttpClient okHttpClient();
 
-    @ApplicationModule.ForLanguage
+    @ActivityModule.ForLanguage
     Retrofit languageRetrofit();
 
     SpeechClient speechClient();
 
-    @ApplicationModule.ForSpeech
+    @ActivityModule.ForSpeech
     Retrofit speechRetrofit();
 
-    @ApplicationModule.ForUpload
+    @ActivityModule.ForUpload
     Retrofit storageRetrofit();
 
-    @ApplicationModule.ForUpload
+    @ActivityModule.ForUpload
     OkHttpClient uploadHttpClient();
 }

@@ -1,4 +1,4 @@
-package will.tesler.drivethru.application;
+package will.tesler.drivethru.activities;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -34,7 +34,7 @@ import will.tesler.drivethru.speech.SpeechService;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Module
-public class ApplicationModule {
+public class ActivityModule {
 
     @Provides
     @Singleton

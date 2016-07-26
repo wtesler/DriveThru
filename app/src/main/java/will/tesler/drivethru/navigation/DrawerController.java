@@ -1,6 +1,5 @@
 package will.tesler.drivethru.navigation;
 
-import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
-import will.tesler.drivethru.application.DriveThruApplication;
+import will.tesler.drivethru.activities.MainActivity;
 import will.tesler.drivethru.controllers.AnalyzeController;
 import will.tesler.drivethru.controllers.HistoryController;
 import will.tesler.drivethru.navigation.models.DrawerTextItem;
@@ -29,15 +28,15 @@ public class DrawerController {
 
     private final UniversalAdapter mUniversalAdapter = new UniversalAdapter();
 
-    @Nullable private Activity mActivity;
+    @Nullable private MainActivity mActivity;
 
-    public void attachTo(Activity activity, ViewGroup parent) {
+    public void attachTo(MainActivity activity, ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_drawer, parent, true);
         ButterKnife.bind(this, view);
 
         mActivity = activity;
 
-        ((DriveThruApplication) mActivity.getApplication()).getApplicationComponent().inject(this);
+        mActivity.getActivityComponent().inject(this);
 
         mUniversalAdapter.register(DrawerTextItem.class, DrawerTextTransformer.class);
         mRecyclerView.setAdapter(mUniversalAdapter);

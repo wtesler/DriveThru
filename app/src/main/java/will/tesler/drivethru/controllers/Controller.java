@@ -3,9 +3,11 @@ package will.tesler.drivethru.controllers;
 import android.app.Activity;
 import android.view.ViewGroup;
 
+import will.tesler.drivethru.activities.MainActivity;
+
 public interface Controller {
 
-    void attachTo(Activity activity, ViewGroup parent);
+    void attachTo(MainActivity activity, ViewGroup parent);
 
     void detach();
 

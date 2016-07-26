@@ -1,6 +1,5 @@
 package will.tesler.drivethru.controllers;
 
-import android.app.Activity;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,8 +34,8 @@ import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.activities.MainActivity;
 import will.tesler.drivethru.analysis.DependencyTree;
-import will.tesler.drivethru.application.DriveThruApplication;
 import will.tesler.drivethru.language.LanguageClient;
 import will.tesler.drivethru.language.models.Features;
 import will.tesler.drivethru.language.models.GcsLanguageDocument;
@@ -76,10 +75,10 @@ public class AnalyzeController implements Controller {
     @NonNull private UniversalAdapter mAdapter = new UniversalAdapter();
 
     private View mView;
-    private Activity mActivity;
+    private MainActivity mActivity;
 
     @Override
-    public void attachTo(Activity activity, ViewGroup parent) {
+    public void attachTo(MainActivity mainActivity, ViewGroup parent) {
         if (mView == null) {
             mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_analyze, parent, false);
             parent.addView(mView);
@@ -88,9 +87,9 @@ public class AnalyzeController implements Controller {
             throw new IllegalStateException("Cannot attach twice without detaching.");
         }
 
-        mActivity = activity;
+        mActivity = mainActivity;
 
-        ((DriveThruApplication) mActivity.getApplication()).getApplicationComponent().inject(this);
+        mainActivity.getActivityComponent().inject(this);
 
         mAdapter.register(Sentence.class, SentenceTransformer.class);
         mAdapter.register(Token[].class, TokenRowTransformer.class);

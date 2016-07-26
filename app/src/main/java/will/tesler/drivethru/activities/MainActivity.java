@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
-import will.tesler.drivethru.application.DriveThruApplication;
 import will.tesler.drivethru.controllers.AnalyzeController;
 import will.tesler.drivethru.controllers.Controller;
 import will.tesler.drivethru.controllers.HistoryController;
@@ -40,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<Controller> mControllerList = new ArrayList<>();
 
+    private ActivityComponent mActivityComponent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ((DriveThruApplication) getApplication()).getApplicationComponent().inject(this);
+        mActivityComponent = DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule())
+                .build();
+
+        mActivityComponent.inject(this);
 
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -110,4 +115,9 @@ public class MainActivity extends AppCompatActivity {
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
     }
+
+    public ActivityComponent getActivityComponent() {
+        return mActivityComponent;
+    }
+
 }
