@@ -3,11 +3,13 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="item_spacing">4dp</dimen>
-
-    <dimen name="item_partofspeech_height">64dp</dimen>
+    <dimen name="drawer_icon_padding_right">32dp</dimen>
+    <dimen name="drawer_text_item_height">64dp</dimen>
+    <dimen name="drawer_title_text_size">20sp</dimen>
 
     <dimen name="edittext_min_height">64dp</dimen>
 
+    <dimen name="item_spacing">4dp</dimen>
+    <dimen name="item_partofspeech_height">64dp</dimen>
 
 </resources>

@@ -2,6 +2,7 @@ package will.tesler.drivethru.application;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -21,8 +22,11 @@ import dagger.Provides;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
+import will.tesler.drivethru.controllers.AnalyzeController;
+import will.tesler.drivethru.controllers.HistoryController;
 import will.tesler.drivethru.language.LanguageClient;
 import will.tesler.drivethru.language.LanguageService;
+import will.tesler.drivethru.navigation.DrawerController;
 import will.tesler.drivethru.security.GoogleAuth;
 import will.tesler.drivethru.speech.SpeechClient;
 import will.tesler.drivethru.speech.SpeechService;
@@ -31,6 +35,30 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Module
 public class ApplicationModule {
+
+    @Provides
+    @Singleton
+    AnalyzeController provideAnalyzeController() {
+        return new AnalyzeController();
+    }
+
+    @Provides
+    @Singleton
+    Gson provideGson() {
+        return new Gson();
+    }
+
+    @Provides
+    @Singleton
+    HistoryController provideHistoryController() {
+        return new HistoryController();
+    }
+
+    @Provides
+    @Singleton
+    DrawerController provideDrawerController() {
+        return new DrawerController();
+    }
 
     @Provides
     @Singleton
