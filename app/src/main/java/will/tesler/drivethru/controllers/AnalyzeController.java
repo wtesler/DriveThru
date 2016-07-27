@@ -1,6 +1,7 @@
 package will.tesler.drivethru.controllers;
 
 import android.os.SystemClock;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,7 +61,7 @@ import will.tesler.drivethru.utils.UiUtils;
 
 import static will.tesler.drivethru.speech.models.RecognitionConfig.FLAC;
 
-public class AnalyzeController implements Controller {
+public class AnalyzeController extends Controller {
 
     @Inject Gson mGson;
     @Inject LanguageClient mLanguageClient;
@@ -74,18 +75,13 @@ public class AnalyzeController implements Controller {
     @Nullable private Subscription languageSubscription;
     @NonNull private UniversalAdapter mAdapter = new UniversalAdapter();
 
-    private View mView;
     private MainActivity mActivity;
 
     @Override
     public void attachTo(MainActivity mainActivity, ViewGroup parent) {
-        if (mView == null) {
-            mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_analyze, parent, false);
-            parent.addView(mView);
-            ButterKnife.bind(this, mView);
-        } else {
-            throw new IllegalStateException("Cannot attach twice without detaching.");
-        }
+        inflate(R.layout.layout_analyze, parent);
+
+        ButterKnife.bind(this, getView());
 
         mActivity = mainActivity;
 
@@ -102,16 +98,6 @@ public class AnalyzeController implements Controller {
     @Override
     public void detach() {
         RxUtils.unsubscribe(languageSubscription);
-    }
-
-    @Override
-    public void show() {
-        mView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hide() {
-        mView.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.button_analyze)

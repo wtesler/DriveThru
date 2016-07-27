@@ -8,4 +8,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="drawer_item">Drawer item.</string>
+
+    <string name="drawer_analyze">Analyze</string>
+    <string name="drawer_history">History</string>
 </resources>

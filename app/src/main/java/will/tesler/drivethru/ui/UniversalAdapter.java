@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import rx.Observable;
+import rx.functions.Func1;
+import rx.subjects.PublishSubject;
+
+import static android.R.attr.action;
 import static android.R.attr.tag;
 
 /**
@@ -51,6 +57,8 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
      */
     private Map<Class<?>, Class<? extends Transformer>> mRegistrar = new LinkedHashMap<>();
 
+    private PublishSubject<Pair<Object, String>> mUniversalSubject = PublishSubject.create();
+
     /**
      * Transform a model into a view. No need to check for raw type inference because it is implied
      * by the registrar's structure.
@@ -62,7 +70,7 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
     @Override
     public void onBindViewHolder(Transformer transformer, int position) {
         Object model = getModel(position);
-        transformer.transform(model);
+        transformer.transform(model, mUniversalSubject);
     }
 
     /**
@@ -311,6 +319,21 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
         return null;
     }
 
+    public <T> Observable<T> getObservable(final Class<T> modelClass, final String action) {
+        return mUniversalSubject.filter(new Func1<Pair<Object, String>, Boolean>() {
+            @Override
+            public Boolean call(Pair<Object, String> emission) {
+                return emission.first.getClass().equals(modelClass)
+                        && emission.second.equals(action);
+            }
+        }).map(new Func1<Pair<Object, String>, T>() {
+            @Override
+            public T call(Pair<Object, String> objectStringPair) {
+                return (T) objectStringPair.first;
+            }
+        });
+    }
+
     /**
      * Verify that every model in a section has been registered with the adapter.
      *
@@ -414,7 +437,7 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
          *
          * @param model The model which will be used to alter the view.
          */
-        protected abstract void transform(T model);
+        protected abstract void transform(T model, PublishSubject<Pair<T, String>> subject);
 
         /**
          * Get the view that the model will be bound to.
