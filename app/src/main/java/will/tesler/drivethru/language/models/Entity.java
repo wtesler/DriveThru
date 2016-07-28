@@ -3,6 +3,7 @@ package will.tesler.drivethru.language.models;
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
@@ -13,7 +14,7 @@ public class Entity {
     public @EntityType String type;
     public Map<String, String> metadata;
     public int salience;
-    public EntityMention[] mentions;
+    public List<EntityMention> mentions;
 
     @Retention(SOURCE)
     @StringDef({

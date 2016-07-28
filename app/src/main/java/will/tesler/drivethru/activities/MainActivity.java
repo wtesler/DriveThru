@@ -19,9 +19,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
-import will.tesler.drivethru.controllers.AnalyzeController;
+import will.tesler.drivethru.analysis.AnalyzeController;
 import will.tesler.drivethru.controllers.Controller;
-import will.tesler.drivethru.controllers.HistoryController;
+import will.tesler.drivethru.history.HistoryController;
 import will.tesler.drivethru.navigation.DrawerController;
 import will.tesler.drivethru.utils.UiUtils;
 

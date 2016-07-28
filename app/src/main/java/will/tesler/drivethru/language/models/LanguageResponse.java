@@ -1,10 +1,12 @@
 package will.tesler.drivethru.language.models;
 
+import java.util.List;
+
 public class LanguageResponse {
 
-    public Sentence[] sentences;
-    public Token[] tokens;
-    public Entity[] entities;
+    public List<Sentence> sentences;
+    public List<Token> tokens;
+    public List<Entity> entities;
     public Sentiment documentSentiment;
     public @LanguageDocument.Iso String language;
 }

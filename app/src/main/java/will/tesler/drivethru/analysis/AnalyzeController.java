@@ -1,4 +1,4 @@
-package will.tesler.drivethru.controllers;
+package will.tesler.drivethru.analysis;
 
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -10,15 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
-import com.squareup.okhttp.ResponseBody;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -32,8 +26,12 @@ import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.activities.ActivityModule.ForAnalysis;
 import will.tesler.drivethru.activities.MainActivity;
-import will.tesler.drivethru.analysis.DependencyTree;
+import will.tesler.drivethru.adapter.Section;
+import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.analysis.models.DependencyTree;
+import will.tesler.drivethru.controllers.Controller;
 import will.tesler.drivethru.language.LanguageClient;
 import will.tesler.drivethru.language.models.Features;
 import will.tesler.drivethru.language.models.GcsLanguageDocument;
@@ -48,11 +46,9 @@ import will.tesler.drivethru.speech.models.GcsAudio;
 import will.tesler.drivethru.speech.models.GcsSpeechRequest;
 import will.tesler.drivethru.speech.models.RecognitionConfig;
 import will.tesler.drivethru.speech.models.SpeechResponse;
-import will.tesler.drivethru.adapter.Section;
 import will.tesler.drivethru.ui.SentenceTransformer;
 import will.tesler.drivethru.ui.TokenRowTransformer;
 import will.tesler.drivethru.ui.TreeTransformer;
-import will.tesler.drivethru.adapter.UniversalAdapter;
 import will.tesler.drivethru.utils.RxUtils;
 import will.tesler.drivethru.utils.UiUtils;
 
@@ -60,10 +56,10 @@ import static will.tesler.drivethru.speech.models.RecognitionConfig.FLAC;
 
 public class AnalyzeController extends Controller {
 
+    @Inject @ForAnalysis DatabaseReference mAnalysisDatabase;
     @Inject Gson mGson;
     @Inject LanguageClient mLanguageClient;
     @Inject SpeechClient mSpeechClient;
-    @Inject StorageReference mStorageReference;
 
     @Bind(R.id.button_analyze) Button mButtonAnalyze;
     @Bind(R.id.edittext_query) EditText mEditTextQuery;
@@ -102,7 +98,7 @@ public class AnalyzeController extends Controller {
         String query = mEditTextQuery.getText().toString();
         if (!query.equals("")) {
             LanguageRequest request = constructLanguageRequest(query);
-            requestLanguageAnalysis(mLanguageClient.rawParse(request));
+            requestLanguageAnalysis(mLanguageClient.parse(request));
 
             mEditTextQuery.setText("");
             mRecyclerView.scrollToPosition(0);
@@ -110,19 +106,13 @@ public class AnalyzeController extends Controller {
         }
     }
 
-    private void requestLanguageAnalysis(@NonNull final Observable<ResponseBody> response) {
+    private void requestLanguageAnalysis(@NonNull final Observable<LanguageResponse> response) {
         languageSubscription = response
-                .subscribe(new Action1<ResponseBody>() {
+                .subscribe(new Action1<LanguageResponse>() {
                     @Override
-                    public void call(@NonNull ResponseBody responseBody) {
-                        try {
-                            String jsonResponse = responseBody.string();
-                            LanguageResponse languageResponse = mGson.fromJson(jsonResponse, LanguageResponse.class);
-                            storeLanguageResponse(jsonResponse, languageResponse);
-                            visualizeLanguageResponse(languageResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    public void call(@NonNull LanguageResponse response) {
+                        storeLanguageResponse(response);
+                        visualizeLanguageResponse(response);
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -176,19 +166,19 @@ public class AnalyzeController extends Controller {
         int currentTokenIndex = 0;
         int startTokenIndex = 0;
 
-        for (int i = 0; i < languageResponse.sentences.length; i++) {
+        for (int i = 0; i < languageResponse.sentences.size(); i++) {
             Section section = new Section();
 
-            section.add(languageResponse.sentences[i]);
+            section.add(languageResponse.sentences.get(i));
 
-            int endOffset = i < languageResponse.sentences.length - 1
-                    ? languageResponse.sentences[i + 1].text.beginOffset
+            int endOffset = i < languageResponse.sentences.size() - 1
+                    ? languageResponse.sentences.get(i + 1).text.beginOffset
                     : Integer.MAX_VALUE;
 
             ArrayList<Token> sentenceTokenList = new ArrayList<>();
 
-            for (int j = currentTokenIndex; j < languageResponse.tokens.length; j++) {
-                Token currentToken = languageResponse.tokens[currentTokenIndex];
+            for (int j = currentTokenIndex; j < languageResponse.tokens.size(); j++) {
+                Token currentToken = languageResponse.tokens.get(currentTokenIndex);
                 if (currentToken.text.beginOffset < endOffset) {
                     sentenceTokenList.add(currentToken);
                     currentTokenIndex++;
@@ -209,27 +199,8 @@ public class AnalyzeController extends Controller {
         }
     }
 
-    private void storeLanguageResponse(String jsonResponse, LanguageResponse languageResponse) {
-        StorageReference searchReference = mStorageReference.child("analysis/" + UUID.randomUUID().toString());
-
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("text/plain")
-                .setCustomMetadata("Title", languageResponse.sentences[0].text.content)
-                .build();
-
-        searchReference.putBytes(jsonResponse.getBytes(), metadata)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("MainActivity", "Upload succeeded.");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Log.e("MainActivity", "Failure!", exception);
-                    }
-                });
+    private void storeLanguageResponse(LanguageResponse response) {
+        mAnalysisDatabase.child(UUID.randomUUID().toString()).setValue(response);
     }
 
     private LanguageRequest constructLanguageRequest(String content) {

@@ -1,4 +1,4 @@
-package will.tesler.drivethru.controllers;
+package will.tesler.drivethru.history;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,7 @@ import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
 import will.tesler.drivethru.activities.MainActivity;
 import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.controllers.Controller;
 
 public class HistoryController extends Controller {
 

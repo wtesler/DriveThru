@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
 import will.tesler.drivethru.adapter.UniversalAdapter;
 import will.tesler.drivethru.adapter.UniversalSubject;
-import will.tesler.drivethru.analysis.DependencyTree;
+import will.tesler.drivethru.analysis.models.DependencyTree;
 import will.tesler.drivethru.language.models.Token;
 
 public class TreeTransformer extends UniversalAdapter.Transformer<DependencyTree> {

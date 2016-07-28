@@ -1,7 +1,7 @@
 package will.tesler.drivethru.activities;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Interceptor;
@@ -22,8 +22,8 @@ import dagger.Provides;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
-import will.tesler.drivethru.controllers.AnalyzeController;
-import will.tesler.drivethru.controllers.HistoryController;
+import will.tesler.drivethru.analysis.AnalyzeController;
+import will.tesler.drivethru.history.HistoryController;
 import will.tesler.drivethru.language.LanguageClient;
 import will.tesler.drivethru.language.LanguageService;
 import will.tesler.drivethru.navigation.DrawerController;
@@ -153,9 +153,11 @@ public class ActivityModule {
     }
 
     @Provides
+    @ForAnalysis
     @Singleton
-    StorageReference provideStorageReference() {
-        return FirebaseStorage.getInstance().getReference();
+    DatabaseReference provideAnalysisDatabase() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference("analysis");
     }
 
     @Qualifier
@@ -172,4 +174,9 @@ public class ActivityModule {
     @Documented
     @Retention(RUNTIME)
     public @interface ForUpload { }
+
+    @Qualifier
+    @Documented
+    @Retention(RUNTIME)
+    public @interface ForAnalysis { }
 }

@@ -1,4 +1,4 @@
-package will.tesler.drivethru.analysis;
+package will.tesler.drivethru.analysis.models;
 
 import android.support.annotation.NonNull;
 
