@@ -6,6 +6,8 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalSubject;
 import will.tesler.drivethru.language.models.Sentence;
 
 public class SentenceTransformer extends UniversalAdapter.Transformer<Sentence> {
@@ -18,7 +20,7 @@ public class SentenceTransformer extends UniversalAdapter.Transformer<Sentence> 
     }
 
     @Override
-    protected void transform(Sentence model) {
+    protected void transform(Sentence model, final UniversalSubject universalSubject) {
         mTextViewSentence.setText(model.text.content);
     }
 }

@@ -12,6 +12,8 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalSubject;
 import will.tesler.drivethru.analysis.DependencyTree;
 import will.tesler.drivethru.language.models.Token;
 
@@ -25,7 +27,7 @@ public class TreeTransformer extends UniversalAdapter.Transformer<DependencyTree
     }
 
     @Override
-    protected void transform(DependencyTree dependencyTree) {
+    protected void transform(DependencyTree dependencyTree, final UniversalSubject universalSubject) {
         mViewGroupTree.removeAllViews();
 
         DependencyTree.Node dependencyRoot = dependencyTree.getRoot();

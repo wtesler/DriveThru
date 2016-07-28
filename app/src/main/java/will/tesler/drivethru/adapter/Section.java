@@ -1,4 +1,4 @@
-package will.tesler.drivethru.ui;
+package will.tesler.drivethru.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

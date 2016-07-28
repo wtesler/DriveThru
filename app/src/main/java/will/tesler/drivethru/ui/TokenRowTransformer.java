@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalSubject;
 import will.tesler.drivethru.language.models.Token;
 
 public class TokenRowTransformer extends UniversalAdapter.Transformer<Token[]> {
@@ -19,7 +21,7 @@ public class TokenRowTransformer extends UniversalAdapter.Transformer<Token[]> {
     }
 
     @Override
-    protected void transform(Token[] tokens) {
+    protected void transform(Token[] tokens, final UniversalSubject universalSubject) {
         UniversalAdapter adapter = new UniversalAdapter();
         adapter.register(Token.class, TokenItemTransformer.class);
 

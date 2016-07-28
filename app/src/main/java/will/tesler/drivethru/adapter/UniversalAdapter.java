@@ -1,4 +1,4 @@
-package will.tesler.drivethru.ui;
+package will.tesler.drivethru.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -18,10 +18,6 @@ import java.util.UUID;
 
 import rx.Observable;
 import rx.functions.Func1;
-import rx.subjects.PublishSubject;
-
-import static android.R.attr.action;
-import static android.R.attr.tag;
 
 /**
  * The UniversalAdapter is a composable non-abstract {@code RecyclerAdapter} which can be used as-is without needing to
@@ -57,7 +53,7 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
      */
     private Map<Class<?>, Class<? extends Transformer>> mRegistrar = new LinkedHashMap<>();
 
-    private PublishSubject<Pair<Object, String>> mUniversalSubject = PublishSubject.create();
+    private UniversalSubject mUniversalSubject = new UniversalSubject();
 
     /**
      * Transform a model into a view. No need to check for raw type inference because it is implied
@@ -436,8 +432,9 @@ public class UniversalAdapter extends RecyclerView.Adapter<UniversalAdapter.Tran
          * Alter the behavior and appearance of the view given the model.
          *
          * @param model The model which will be used to alter the view.
+         * @param subject The subject which events objects with custom actions.
          */
-        protected abstract void transform(T model, PublishSubject<Pair<T, String>> subject);
+        protected abstract void transform(T model, UniversalSubject subject);
 
         /**
          * Get the view that the model will be bound to.

@@ -1,14 +1,11 @@
 package will.tesler.drivethru.controllers;
 
 import android.os.SystemClock;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,11 +48,11 @@ import will.tesler.drivethru.speech.models.GcsAudio;
 import will.tesler.drivethru.speech.models.GcsSpeechRequest;
 import will.tesler.drivethru.speech.models.RecognitionConfig;
 import will.tesler.drivethru.speech.models.SpeechResponse;
-import will.tesler.drivethru.ui.Section;
+import will.tesler.drivethru.adapter.Section;
 import will.tesler.drivethru.ui.SentenceTransformer;
 import will.tesler.drivethru.ui.TokenRowTransformer;
 import will.tesler.drivethru.ui.TreeTransformer;
-import will.tesler.drivethru.ui.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalAdapter;
 import will.tesler.drivethru.utils.RxUtils;
 import will.tesler.drivethru.utils.UiUtils;
 

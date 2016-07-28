@@ -8,7 +8,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
 import will.tesler.drivethru.activities.MainActivity;
-import will.tesler.drivethru.ui.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalAdapter;
 
 public class HistoryController extends Controller {
 

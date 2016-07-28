@@ -6,6 +6,8 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import will.tesler.drivethru.R;
+import will.tesler.drivethru.adapter.UniversalAdapter;
+import will.tesler.drivethru.adapter.UniversalSubject;
 import will.tesler.drivethru.language.models.Token;
 
 public class TokenItemTransformer extends UniversalAdapter.Transformer<Token> {
@@ -19,7 +21,7 @@ public class TokenItemTransformer extends UniversalAdapter.Transformer<Token> {
     }
 
     @Override
-    protected void transform(Token token) {
+    protected void transform(Token token, final UniversalSubject universalSubject) {
         mTextViewLemma.setText(token.lemma);
         mTextViewPartOfSpeech.setText(token.partOfSpeech.tag);
     }
